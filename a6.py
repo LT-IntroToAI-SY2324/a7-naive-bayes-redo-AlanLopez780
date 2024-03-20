@@ -52,11 +52,15 @@ class BayesClassifier:
         if not files:
             raise RuntimeError(f"Couldn't find path {self.training_data_directory}")
 
+        # print(files)
+        # print(len(files))
         # files now holds a list of the filenames
         # self.training_data_directory holds the folder name where these files are
         
 
         # stored below is how you would load a file with filename given by `fName`
+        # fName = files[0]
+        # print(fName)
         # `text` here will be the literal text of the file (i.e. what you would see
         # if you opened the file in a text editor
         # text = self.load_file(os.path.join(self.training_data_directory, fName))
@@ -66,10 +70,12 @@ class BayesClassifier:
         # enumerate function, which loops over something and has an automatic counter.
         # write something like this to track progress (note the `# type: ignore` comment
         # which tells mypy we know better and it shouldn't complain at us on this line):
-        # for index, filename in enumerate(files, 1): # type: ignore
-        #     print(f"Training on file {index} of {len(files)}")
+        for index, filename in enumerate(files, 1): # type: ignore
+            print("------------------------------------------")
+            print(f"Training {filename} on file {index} of {len(files)}")
         #     <the rest of your code for updating frequencies here>
-
+            text = self.load_file(os.path.join(self.training_data_directory, filename))
+            print(text)
 
         # we want to fill pos_freqs and neg_freqs with the correct counts of words from
         # their respective reviews
@@ -88,12 +94,16 @@ class BayesClassifier:
         # those tokens. We've asked you to write a function `update_dict` that will make
         # your life easier here. Write that function first then pass it your list of
         # tokens from the file and the appropriate dictionary
-        
-
+            print(f"positive? {filename.startswith(self.pos_file_prefix)}")
+            print(f"negative? {filename.startswith(self.neg_file_prefix)}")
+            tokens = self.tokenize(text)
+            print(tokens)
+            
+            self.update_dict(tokens, self.pos_freqs)
         # for debugging purposes, it might be useful to print out the tokens and their
         # frequencies for both the positive and negative dictionaries
         
-
+        print(self.pos_freqs)
         # once you have gone through all the files, save the frequency dictionaries to
         # avoid extra work in the future (using the save_dict method). The objects you
         # are saving are self.pos_freqs and self.neg_freqs and the filepaths to save to
@@ -222,12 +232,16 @@ class BayesClassifier:
             freqs - dictionary of frequencies to update
         """
         # TODO: your work here
-        pass  # remove this line once you've implemented this method
+        for word in words:
+            if word in freqs:
+                freqs[word] += 1
+            else:
+                freqs[word] = 1
 
 
 if __name__ == "__main__":
     # uncomment the below lines once you've implemented `train` & `classify`
-    # b = BayesClassifier()
+    b = BayesClassifier()
     # a_list_of_words = ["I", "really", "like", "this", "movie", ".", "I", "hope", \
     #                    "you", "like", "it", "too"]
     # a_dictionary = {}
