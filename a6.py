@@ -106,8 +106,8 @@ class BayesClassifier:
         # for debugging purposes, it might be useful to print out the tokens and their
         # frequencies for both the positive and negative dictionaries
         
-        print(len(self.pos_freqs))
-        print(len(self.neg_freqs))
+        # print(len(self.pos_freqs))
+        # print(len(self.neg_freqs))
         # once you have gone through all the files, save the frequency dictionaries to
         # avoid extra work in the future (using the save_dict method). The objects you
         # are saving are self.pos_freqs and self.neg_freqs and the filepaths to save to
@@ -130,7 +130,7 @@ class BayesClassifier:
         
         # get a list of the individual tokens that occur in text
         tokens = self.tokenize(text)
-        print(tokens)
+        # print(tokens)
 
         # create some variables to store the positive and negative probability. since
         # we will be adding logs of probabilities, the initial values for the positive
@@ -144,23 +144,38 @@ class BayesClassifier:
         # individual feature
         num_pos_words = sum(self.pos_freqs.values())
         num_neg_words = sum(self.neg_freqs.values())
-        print(num_pos_words)
-        print(num_neg_words)
+        # print(num_pos_words)
+        # print(num_neg_words)
 
         # for each token in the text, calculate the probability of it occurring in a
         # postive document and in a negative document and add the logs of those to the
         # running sums. when calculating the probabilities, always add 1 to the numerator
         # of each probability for add one smoothing (so that we never have a probability
         # of 0)
-        
+        for word in tokens:
+            num_pos_appearances = 1
+            if word in self.pos_freqs:
+                num_pos_appearances += self.pos_freqs[word]
+            # print(num_pos_appearances)
+            pos_prob += math.log(num_pos_appearances / num_pos_words)
+
+            num_neg_appearances = 1
+            if word in self.neg_freqs:
+                num_neg_appearances += self.neg_freqs[word]
+            # print(num_neg_appearances)
+            neg_prob += math.log(num_neg_appearances / num_neg_words)
 
         # for debugging purposes, it may help to print the overall positive and negative
         # probabilities
-        
+        print(f"Positive Probability: {pos_prob}")
+        print(f"Negative Probability: {neg_prob}")
 
         # determine whether positive or negative was more probable (i.e. which one was
         # larger)
-        
+        if pos_prob > neg_prob:
+            return "positive"
+        else:
+            return "negative"
 
         # return a string of "positive" or "negative"
 
@@ -295,8 +310,8 @@ if __name__ == "__main__":
     # # uncomment the below lines once you've implemented `classify`
     print("\nThe following should all be positive.")
     print(b.classify('I love computer science'))
-    # print(b.classify('this movie is fantastic'))
-    # print("\nThe following should all be negative.")
-    # print(b.classify('rainy days are the worst'))
-    # print(b.classify('computer science is terrible'))
+    print(b.classify('this movie is fantastic'))
+    print("\nThe following should all be negative.")
+    print(b.classify('rainy days are the worst'))
+    print(b.classify('computer science is terrible'))
     pass
